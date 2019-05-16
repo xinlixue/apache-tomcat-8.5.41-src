@@ -43,11 +43,29 @@ public class Department {
     this.extension = extension;
   }
 
+  public void addUser(User user) {
+    this.users.add(user);
+  }
+
   public List<User> getUsers() {
     return users;
   }
 
   public void setUsers(List<User> users) {
     this.users = users;
+  }
+
+  public void putExtension(String name, String value) {
+    this.extension.put(name, value);
+  }
+
+  @Override
+  public String toString() {
+    return "Department{" +
+            "name='" + name + '\'' +
+            ", code='" + code + '\'' +
+            ", extension=" + extension +
+            ", users=" + users +
+            '}';
   }
 }
