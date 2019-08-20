@@ -28,6 +28,7 @@ import org.apache.juli.logging.LogFactory;
 
 /**
  * Utils for introspection and reflection
+ * 对象反射赋值工具类
  */
 public final class IntrospectionUtils {
 

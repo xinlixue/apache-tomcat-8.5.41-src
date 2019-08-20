@@ -21,6 +21,7 @@ import org.xml.sax.Attributes;
 /**
  * Concrete implementations of this class implement actions to be taken when
  * a corresponding nested pattern of XML elements has been matched.
+ * 处理规则需要实现该接口
  */
 public abstract class Rule {
 
@@ -99,6 +100,8 @@ public abstract class Rule {
      * This method is called when the beginning of a matching XML element
      * is encountered. The default implementation is a NO-OP.
      *
+     * 当读取到匹配节点的开始部分时调用，会将该节点所有属性当作参数传入
+     *
      * @param namespace the namespace URI of the matching element, or an
      *                  empty string if the parser is not namespace aware or the
      *                  element has no namespace
@@ -118,6 +121,8 @@ public abstract class Rule {
      * encountered.  If the element has no body, this method is not called at
      * all. The default implementation is a NO-OP.
      *
+     * 当读取匹配节点的内容时调用，内容为普通文本
+     *
      * @param namespace the namespace URI of the matching element, or an empty
      *                  string if the parser is not namespace aware or the
      *                  element has no namespace
@@ -136,6 +141,8 @@ public abstract class Rule {
      * This method is called when the end of a matching XML element
      * is encountered. The default implementation is a NO-OP.
      *
+     * 当读取到匹配节点的结束部分时调用，如果存在子节点，子节点处理完毕才会调用
+     *
      * @param namespace the namespace URI of the matching element, or an empty
      *                  string if the parser is not namespace aware or the
      *                  element has no namespace
@@ -152,6 +159,8 @@ public abstract class Rule {
     /**
      * This method is called after all parsing methods have been
      * called, to allow Rules to remove temporary data.
+     *
+     * 当整个parse()方法完成时调用，多用于清理数据和缓存
      *
      * @throws Exception if an error occurs while processing the event
      */
