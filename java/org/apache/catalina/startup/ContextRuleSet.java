@@ -96,12 +96,18 @@ public class ContextRuleSet extends RuleSetBase {
      * our namespace URI (if any).  This method should only be called
      * by a Digester instance.</p>
      *
+     * Context的配置有多处，大多数情况不需要在server.xml中配置Context，由HostConfig自动扫描部署目录,以context.xml文件
+     * 为基础进行解析创建，如果使用IDE工具启动Tomcat部署web应用，其Context配置会动态更新到server.xml中
+     *
      * @param digester Digester instance to which the new Rule instances
      *  should be added.
      */
     @Override
     public void addRuleInstances(Digester digester) {
-
+        /**
+         *  通过server.xml配置Context时,create为true,因此需要创建Context实例
+         *  通过HostConfig自动创建Context时,create为false，此时仅需要解析子节点接口
+         */
         if (create) {
             digester.addObjectCreate(prefix + "Context",
                     "org.apache.catalina.core.StandardContext", "className");
@@ -119,7 +125,7 @@ public class ContextRuleSet extends RuleSetBase {
                                 "addChild",
                                 "org.apache.catalina.Container");
         }
-
+        //为Context添加生命周期监听器
         digester.addObjectCreate(prefix + "Context/Listener",
                                  null, // MUST be specified in the element
                                  "className");
@@ -127,7 +133,7 @@ public class ContextRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Context/Listener",
                             "addLifecycleListener",
                             "org.apache.catalina.LifecycleListener");
-
+        //为Context指定类加载器
         digester.addObjectCreate(prefix + "Context/Loader",
                             "org.apache.catalina.loader.WebappLoader",
                             "className");
@@ -135,7 +141,7 @@ public class ContextRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Context/Loader",
                             "setLoader",
                             "org.apache.catalina.Loader");
-
+        //为Context添加会话管理器
         digester.addObjectCreate(prefix + "Context/Manager",
                                  "org.apache.catalina.session.StandardManager",
                                  "className");
@@ -159,7 +165,7 @@ public class ContextRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Context/Manager/SessionIdGenerator",
                             "setSessionIdGenerator",
                             "org.apache.catalina.SessionIdGenerator");
-
+        //为Context添加初始化参数
         digester.addObjectCreate(prefix + "Context/Parameter",
                                  "org.apache.tomcat.util.descriptor.web.ApplicationParameter");
         digester.addSetProperties(prefix + "Context/Parameter");
@@ -168,7 +174,7 @@ public class ContextRuleSet extends RuleSetBase {
                             "org.apache.tomcat.util.descriptor.web.ApplicationParameter");
 
         digester.addRuleSet(new RealmRuleSet(prefix + "Context/"));
-
+        //为Context添加安全配置以及Web资源配置
         digester.addObjectCreate(prefix + "Context/Resources",
                                  "org.apache.catalina.webresources.StandardRoot",
                                  "className");
@@ -201,14 +207,14 @@ public class ContextRuleSet extends RuleSetBase {
                             "addPostResources",
                             "org.apache.catalina.WebResourceSet");
 
-
+        //为Context添加资源链接
         digester.addObjectCreate(prefix + "Context/ResourceLink",
                 "org.apache.tomcat.util.descriptor.web.ContextResourceLink");
         digester.addSetProperties(prefix + "Context/ResourceLink");
         digester.addRule(prefix + "Context/ResourceLink",
                 new SetNextNamingRule("addResourceLink",
                         "org.apache.tomcat.util.descriptor.web.ContextResourceLink"));
-
+        //为Context添加Valve
         digester.addObjectCreate(prefix + "Context/Valve",
                                  null, // MUST be specified in the element
                                  "className");
@@ -216,7 +222,10 @@ public class ContextRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Context/Valve",
                             "addValve",
                             "org.apache.catalina.Valve");
-
+        /**
+         * 为Context添加守护资源配置
+         * WatchedResource: 用于为Context添加监视资源，当这些资源发生变更时，这些应用将重新加载，具体见conf/context.xml
+         */
         digester.addCallMethod(prefix + "Context/WatchedResource",
                                "addWatchedResource", 0);
 

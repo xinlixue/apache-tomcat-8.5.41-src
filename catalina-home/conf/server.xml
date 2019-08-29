@@ -43,19 +43,20 @@
                        resourceName="UserDatabase"/>
             </Realm>
 
-            <!--
-                多数情况下，不需要在server.xml中配置Context，而是由HostConfig自动扫描部署目录，
-                以context.xml文件为基础进行解析创建,如果通过IDE启动Tomcat并部署web应用,其Context
-                配置将会动态更新到server.xml
-            -->
-
             <Host name="localhost" appBase="webapps"
                   unpackWARs="true" autoDeploy="true">
 
                 <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                        prefix="localhost_access_log" suffix=".txt"
                        pattern="%h %l %u %t &quot;%r&quot; %s %b"/>
-
+                <!--
+                        多数情况下，不需要在server.xml中配置Context，而是由HostConfig自动扫描部署目录，
+                        以context.xml文件为基础进行解析创建,如果通过IDE启动Tomcat并部署web应用,其Context
+                        配置将会动态更新到server.xml
+                    -->
+                <!--
+                    Context描述文件部署，存储路径由Host的xmlBase属性指定，未指定默认为$CATALINA_BASE/conf/Engine名称/Host名称
+                -->
                 <!--<context />-->
 
             </Host>
